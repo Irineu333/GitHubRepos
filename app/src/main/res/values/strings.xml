@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">GitHub\'s Repos</string>
+    <string name="user_perfil_btn">Perfil do usuário</string>
+    <string name="search_btn">Pesquisar</string>
+    <string name="user_avatar">Avatar do usuário</string>
+    <string name="clique_para_abrir">Clique para abrir</string>
+</resources>
