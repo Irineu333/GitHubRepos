@@ -3,6 +3,7 @@ package com.neu.githubsrepos.ui
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.view.View.OnClickListener
 import android.widget.Toast
 import android.widget.Toast.makeText
@@ -29,7 +30,7 @@ class MainActivity : AppCompatActivity(), RecyclerViewAdapter.OnClickListener {
         setContentView(R.layout.activity_main)
 
         configActionBar()
-        recyclerViewAdapter = RecyclerViewAdapter(this, listener =  this)//retrofit config
+        recyclerViewAdapter = RecyclerViewAdapter(this, listener = this) //retrofit config
 
         configRecyclerView()
 
@@ -40,6 +41,21 @@ class MainActivity : AppCompatActivity(), RecyclerViewAdapter.OnClickListener {
         //carregar repositórios públicos
         listPublic()
 
+        configSearchBar()
+    }
+
+    private fun configSearchBar() {
+        search_field.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                recyclerViewAdapter.filter(newText ?: "")
+                return true
+            }
+        })
+        search_field.queryHint = "Pesquise por repositorios"
     }
 
     private fun createGitHubService(): GitHubService {
@@ -65,8 +81,13 @@ class MainActivity : AppCompatActivity(), RecyclerViewAdapter.OnClickListener {
             R.id.btnSearch -> {
                 makeText(this, "Search", Toast.LENGTH_LONG).show()
 
-                val searchView = SearchView(this)
-                toolbar.addView(searchView)
+                search_bar.visibility = View.VISIBLE
+                search_field.onActionViewExpanded()
+
+                fechar.setOnClickListener {
+                    search_bar.visibility = View.GONE
+                    search_field.onActionViewCollapsed()
+                }
             }
         }
     }
@@ -93,8 +114,7 @@ class MainActivity : AppCompatActivity(), RecyclerViewAdapter.OnClickListener {
                 val repositories: MutableList<Repository>? = body as? MutableList
                 recyclerViewAdapter.setRepositories(repositories ?: mutableListOf())
 
-                if(body == null)
-                {
+                if (body == null) {
                     val message = response.message()
                     makeText(applicationContext, message, Toast.LENGTH_LONG).show()
                     Log.d("Retrofit", "onResponse, body = null, message: $message")

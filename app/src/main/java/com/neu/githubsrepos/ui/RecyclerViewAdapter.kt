@@ -18,6 +18,7 @@ class RecyclerViewAdapter(
     val listener: OnClickListener
 ) : RecyclerView.Adapter<RecyclerViewAdapter.Holder>() {
 
+    private var copyList: MutableList<Repository> = mutableListOf()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         val itemView =
             LayoutInflater.from(parent.context).inflate(R.layout.item_recycler_view, parent, false)
@@ -26,6 +27,7 @@ class RecyclerViewAdapter(
     }
 
     init {
+        copyList.addAll(listaRepos)
         Log.d("RecyclerView", "count ${listaRepos.size}")
     }
 
@@ -63,16 +65,33 @@ class RecyclerViewAdapter(
 
     fun setRepositories(listaRepos: MutableList<Repository>) {
         this.listaRepos.clear()
+        copyList.clear()
         this.listaRepos = listaRepos
+        copyList.addAll(listaRepos)
         notifyDataSetChanged()
 
         Log.d("RecyclerView", "count ${this.listaRepos.size}")
     }
 
+
+    fun filter(filtro: String) {
+        listaRepos.clear()
+        if (filtro.isEmpty()) {
+            listaRepos.addAll(copyList)
+        } else {
+            copyList.forEach {
+                if (it.name.toLowerCase().contains(filtro)) {
+                    listaRepos.add(it)
+                }
+            }
+        }
+        notifyDataSetChanged()
+    }
+
     class Holder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        private var onClickListener : View.OnClickListener? = null
-        private var position : Int? = null
+        private var onClickListener: View.OnClickListener? = null
+        private var position: Int? = null
 
         val avatar: ImageView = itemView.findViewById(R.id.avatar)
         val languages = itemView.findViewById<TextView>(R.id.languages)
@@ -89,9 +108,9 @@ class RecyclerViewAdapter(
     }
 
 
-    interface  OnClickListener {
+    interface OnClickListener {
 
-        fun onClick(data:Any)
+        fun onClick(data: Any)
     }
 
 }
