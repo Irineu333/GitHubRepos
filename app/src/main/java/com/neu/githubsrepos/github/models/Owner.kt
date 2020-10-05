@@ -1,4 +1,5 @@
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 /*
 Copyright (c) 2020 Kotlin Data Classes Generated from JSON powered by http://www.json2kotlin.com
@@ -31,4 +32,4 @@ data class Owner (
 	@SerializedName("received_events_url") val received_events_url : String,
 	@SerializedName("type") val type : String,
 	@SerializedName("site_admin") val site_admin : Boolean
-)
+) : Serializable
