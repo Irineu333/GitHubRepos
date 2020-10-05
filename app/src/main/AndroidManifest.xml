@@ -20,6 +20,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ui.RepositoryActivity"
+            android:theme="@style/Theme.AppCompat.Light"
+            android:label="Repositório">
+        </activity>
     </application>
 
 </manifest>

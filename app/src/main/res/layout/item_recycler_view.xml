@@ -41,7 +41,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/login_name"
+            android:id="@+id/login"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
@@ -51,7 +51,7 @@
             app:layout_constraintTop_toBottomOf="@+id/user_name" />
 
         <TextView
-            android:id="@+id/languagem"
+            android:id="@+id/languages"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
