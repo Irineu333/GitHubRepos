@@ -1,146 +1,107 @@
 package com.neu.githubsrepos.ui
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.view.View.OnClickListener
 import android.widget.Toast
-import android.widget.Toast.makeText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import com.neu.githubsrepos.R
-import com.neu.githubsrepos.github.GitHubService
-import com.neu.githubsrepos.github.models.Repository
+import com.neu.githubsrepos.fragments.MainFragment
+import com.neu.githubsrepos.fragments.RepositoryFragment
+import com.neu.githubsrepos.fragments.RepositoryFragmentDirections
 import kotlinx.android.synthetic.main.activity_main.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
-class MainActivity : AppCompatActivity(), RecyclerViewAdapter.OnClickListener {
-
-    lateinit var recyclerViewAdapter: RecyclerViewAdapter
-    private val gitHubService = createGitHubService()
+class MainActivity : AppCompatActivity() {
+    private var fragment: Fragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+    }
 
-        configActionBar()
-        recyclerViewAdapter = RecyclerViewAdapter(this, listener = this) //retrofit config
+    override fun onResume() {
+        super.onResume()
+    }
 
-        configRecyclerView()
+    fun setFragment(fragment: Fragment) {
+        this.fragment = fragment
+        Log.d("MainActivity", "setFragment")
 
-        //botões config
-        btnPerfil.setOnClickListener(onItemToolbarClick)
-        btnSearch.setOnClickListener(onItemToolbarClick)
+        if (fragment is RepositoryFragment || fragment !is MainFragment) {
+            Log.d("MainActivity", "cast ${fragment as RepositoryFragment}")
 
-        //carregar repositórios públicos
-        listPublic()
+            search_field.setOnQueryTextListener(null)
+            search_field.onActionViewCollapsed()
+            //
+            search_bar.visibility = View.GONE
 
+            btnVoltar.visibility = View.VISIBLE
+            btnPerfil.visibility = View.GONE
+        } else {
+            btnVoltar.visibility = View.GONE
+            btnPerfil.visibility = View.VISIBLE
+        }
         configSearchBar()
     }
 
+    override fun onSupportNavigateUp() = findNavController(R.navigation.my_navigation).navigateUp()
+
+    private val onItemToolbarClick: View.OnClickListener
+        get() {
+            fechar.setOnClickListener {
+                search_bar.visibility = View.GONE
+                search_field.onActionViewCollapsed()
+            }
+            return View.OnClickListener {
+
+                when (it.id) {
+
+                    R.id.btnPerfil -> {
+                        Toast.makeText(this, "Perfil", Toast.LENGTH_LONG).show()
+                    }
+                    R.id.btnSearch -> {
+                        Toast.makeText(this, "Search", Toast.LENGTH_LONG).show()
+
+                        if (fragment is RepositoryFragment)
+                            actionRepositoryToMain()
+
+                        search_bar.visibility = View.VISIBLE
+                        search_field.onActionViewExpanded()
+                    }
+                }
+            }
+        }
+
     private fun configSearchBar() {
-        search_field.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                return true
-            }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                recyclerViewAdapter.filter(newText ?: "")
-                return true
-            }
-        })
-        search_field.queryHint = "Pesquise por repositorios"
-    }
-
-    private fun createGitHubService(): GitHubService {
-        val retrofit = Retrofit.Builder()
-            .baseUrl("https://api.github.com/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-        return retrofit.create(GitHubService::class.java)
-    }
-
-    private fun configRecyclerView() {
-        recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-        recyclerView.adapter = recyclerViewAdapter
-    }
-
-    private val onItemToolbarClick = OnClickListener {
-
-        when (it.id) {
-
-            R.id.btnPerfil -> {
-                makeText(this, "Perfil", Toast.LENGTH_LONG).show()
-            }
-            R.id.btnSearch -> {
-                makeText(this, "Search", Toast.LENGTH_LONG).show()
-
-                search_bar.visibility = View.VISIBLE
-                search_field.onActionViewExpanded()
-
-                fechar.setOnClickListener {
-                    search_bar.visibility = View.GONE
-                    search_field.onActionViewCollapsed()
+        if (fragment is MainFragment) {
+            search_field.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    return true
                 }
+
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    (fragment as MainFragment).recyclerViewAdapter.filter(newText ?: "")
+                    return true
+                }
+            })
+            search_field.queryHint = getString(R.string.search_hint)
+            btnVoltar.setOnClickListener(null)
+        } else {
+            btnVoltar.setOnClickListener {
+                actionRepositoryToMain()
             }
         }
+        btnPerfil.setOnClickListener(onItemToolbarClick)
+        btnSearch.setOnClickListener(onItemToolbarClick)
     }
 
-    private fun listPublic() {
-
-        val callbackListPublic = gitHubService.listPublic()
-
-        callbackListPublic.enqueue(object : Callback<List<Repository>> {
-            override fun onResponse(
-                call: Call<List<Repository>>,
-                response: Response<List<Repository>>
-            ) {
-
-                val body = response.body()
-
-                Log.d("Retrofit", "onResponse")
-                body?.forEach {
-                    Log.d("name", it.name)
-                }
-                Log.d("Retrofit", "Total: ${body?.size}")
-
-                //setando no RecyclerView
-                val repositories: MutableList<Repository>? = body as? MutableList
-                recyclerViewAdapter.setRepositories(repositories ?: mutableListOf())
-
-                if (body == null) {
-                    val message = response.message()
-                    makeText(applicationContext, message, Toast.LENGTH_LONG).show()
-                    Log.d("Retrofit", "onResponse, body = null, message: $message")
-                }
-            }
-
-            override fun onFailure(call: Call<List<Repository>>, t: Throwable) {
-                Log.d("Retrofit", "onFailure: ${t.message}")
-            }
-
-        })
+    private fun actionRepositoryToMain() {
+        NavHostFragment.findNavController(fragment as RepositoryFragment)
+            .navigate(RepositoryFragmentDirections.actionRepositoryFragmentToMainFragment())
     }
 
-    private fun configActionBar() {
-        /** Configura a toolbar para que tenha o comportamente esperado */
-        setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayShowTitleEnabled(false) //desativar o titulo padrão
-    }
-
-    override fun onClick(data: Any) {
-
-        if (data is Repository) {
-            val intent = Intent(this, RepositoryActivity::class.java)
-            intent.putExtra(Repository.EXTRA_KEY, data)
-            startActivity(intent)
-        }
-
-    }
 }

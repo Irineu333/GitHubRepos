@@ -1,9 +1,15 @@
 <resources>
     <string name="app_name">GitHub\'s Repos</string>
+    <string name="app_name2">GitHub\'s Repos [with fragment]</string>
     <string name="user_perfil_btn">Perfil do usuário</string>
     <string name="search_btn">Pesquisar</string>
     <string name="user_avatar">Avatar do usuário</string>
     <string name="clique_para_abrir">Clique para abrir</string>
     <string name="ver_no_github">ver no github</string>
     <string name="clique_para_pesquisar">Clique para pesquisar</string>
+
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="voltar_para_home">Voltar para home</string>
+    <string name="search_hint">Pesquise por repositorios</string>
 </resources>

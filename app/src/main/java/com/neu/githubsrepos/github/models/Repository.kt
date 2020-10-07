@@ -1,9 +1,7 @@
 package com.neu.githubsrepos.github.models
 
-import Owner
-import android.widget.TextView
+
 import com.google.gson.annotations.SerializedName
-import com.neu.githubsrepos.util.*
 import java.io.Serializable
 
 /*
@@ -16,6 +14,7 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 For support, please feel free to contact me at https://www.linkedin.com/in/syedabsar */
+
 
 data class Repository(
 
@@ -67,10 +66,11 @@ data class Repository(
     @SerializedName("teams_url") val teams_url: String,
     @SerializedName("trees_url") val trees_url: String
 ) : Serializable {
+    /*
     private var languages : MutableList<String>? = null
 
     companion object {
-        val EXTRA_KEY: String = "repository"
+        const val EXTRA_KEY: String = "repository"
     }
 
     fun getLanguages(textView: TextView, emLista: Boolean = false) {
@@ -82,4 +82,5 @@ data class Repository(
         } else
             retrofitUtil?.formatar(textView, languages!!, emLista)
     }
+     */
 }
