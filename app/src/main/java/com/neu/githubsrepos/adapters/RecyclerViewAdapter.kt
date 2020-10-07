@@ -1,4 +1,4 @@
-package com.neu.githubsrepos.ui
+package com.neu.githubsrepos.adapters
 
 import android.content.Context
 import android.util.Log
@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.neu.githubsrepos.R
 import com.neu.githubsrepos.github.models.Repository
+import java.util.*
 
 class RecyclerViewAdapter(
     val context: Context,
@@ -22,13 +23,13 @@ class RecyclerViewAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         val itemView =
             LayoutInflater.from(parent.context).inflate(R.layout.item_recycler_view, parent, false)
-        Log.d("RecyclerView", "create view")
+        Log.d("RecyclerView", "onCreateViewHolder")
         return Holder(itemView)
     }
 
     init {
         copyList.addAll(listaRepos)
-        Log.d("RecyclerView", "count ${listaRepos.size}")
+        Log.d("RecyclerView", "init, count ${listaRepos.size}")
     }
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
@@ -41,13 +42,13 @@ class RecyclerViewAdapter(
         val userLogin = autor.login
 
         holder.languages.text = ""
-        repository.getLanguages(holder.languages)
+        //repository.getLanguages(holder.languages)
 
         //avatar config using Glide
         Glide.with(context).load(repository.owner.avatar_url).placeholder(R.drawable.ic_perfil)
             .into(holder.avatar)
 
-        Log.d("RecyclerView", "bind view pos $position")
+        Log.d("RecyclerView", "onBindViewHolder pos $position")
         Log.d("RecyclerView", "repo $userName, $userLogin")
 
 
@@ -70,7 +71,7 @@ class RecyclerViewAdapter(
         copyList.addAll(listaRepos)
         notifyDataSetChanged()
 
-        Log.d("RecyclerView", "count ${this.listaRepos.size}")
+        Log.d("RecyclerView", "setRepositories, count ${this.listaRepos.size}")
     }
 
 
@@ -80,7 +81,7 @@ class RecyclerViewAdapter(
             listaRepos.addAll(copyList)
         } else {
             copyList.forEach {
-                if (it.name.toLowerCase().contains(filtro)) {
+                if (it.name.toLowerCase(Locale.getDefault()).contains(filtro.toLowerCase(Locale.getDefault()))) {
                     listaRepos.add(it)
                 }
             }
@@ -89,9 +90,6 @@ class RecyclerViewAdapter(
     }
 
     class Holder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
-        private var onClickListener: View.OnClickListener? = null
-        private var position: Int? = null
 
         val avatar: ImageView = itemView.findViewById(R.id.avatar)
         val languages = itemView.findViewById<TextView>(R.id.languages)
@@ -104,9 +102,7 @@ class RecyclerViewAdapter(
             this.userName.text = userName
             this.login.text = login
         }
-
     }
-
 
     interface OnClickListener {
 
