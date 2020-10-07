@@ -37,7 +37,7 @@ class RetrofitUtil(
         /* Obter a lista de linguagens de um repositorio */
 
         val callListLanguages =
-            gitHubService.listLanguages(repository.owner.login, repository.name)
+            gitHubService.listLanguages(repository.owner!!.login, repository.name)
 
         callListLanguages.enqueue(callback ?: object : Callback<HashMap<String, Any>> {
             override fun onResponse(

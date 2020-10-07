@@ -1,22 +1,24 @@
 package com.neu.githubsrepos.fragments
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Spinner
 import android.widget.Toast
-import androidx.appcompat.widget.SearchView
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.neu.githubsrepos.MyApplication
 import com.neu.githubsrepos.R
+import com.neu.githubsrepos.adapters.RecyclerViewAdapter
 import com.neu.githubsrepos.github.GitHubService
 import com.neu.githubsrepos.github.models.Repository
 import com.neu.githubsrepos.ui.MainActivity
-import com.neu.githubsrepos.adapters.RecyclerViewAdapter
 import kotlinx.android.synthetic.main.fragment_main.*
-import kotlinx.android.synthetic.main.item_recycler_view.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -54,7 +56,7 @@ class MainFragment : Fragment(), RecyclerViewAdapter.OnClickListener {
         recyclerViewAdapter = RecyclerViewAdapter(context = requireActivity(), listener = this)
 
         configRecyclerView()
-
+        carregarRoom()
 
 
         //botões config
@@ -63,6 +65,20 @@ class MainFragment : Fragment(), RecyclerViewAdapter.OnClickListener {
         //carregar repositórios públicos
         listPublic()
     }
+
+    private fun carregarRoom() {
+        Thread(Runnable {
+            val all = MyApplication.database?.repoDatabaseDao?.getRepoAll()
+            if (all != null) {
+                Log.d("Database", "getAll, count ${all.size}")
+                var handler : Handler = Handler(Looper.getMainLooper())
+                handler.post { recyclerViewAdapter.setRepositories(all as MutableList<Repository>, origin = "Room Database") }
+            } else
+                Log.d("Database", "getAll = nulo")
+
+        }).start()
+    }
+
     companion object {
 
         fun newInstance() = MainFragment()
@@ -79,7 +95,8 @@ class MainFragment : Fragment(), RecyclerViewAdapter.OnClickListener {
     }
 
     private fun configRecyclerView() {
-        recyclerView.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
+        recyclerView.layoutManager =
+            LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
         recyclerView.adapter = recyclerViewAdapter
     }
 
@@ -95,6 +112,17 @@ class MainFragment : Fragment(), RecyclerViewAdapter.OnClickListener {
 
                 val body = response.body()
 
+                //Database
+                Thread(Runnable {
+                    body?.forEach {
+                        Log.d("Database", "insert ${it.name}")
+                        MyApplication.database?.repoDatabaseDao?.insert(
+                            repository = it,
+                            owner = it.owner!!
+                        )
+                    }
+                }).start()
+
                 Log.d("Retrofit", "onResponse")
                 body?.forEach {
                     Log.d("name", it.name)
@@ -103,7 +131,7 @@ class MainFragment : Fragment(), RecyclerViewAdapter.OnClickListener {
 
                 //setando no RecyclerView
                 val repositories: MutableList<Repository>? = body as? MutableList
-                recyclerViewAdapter.setRepositories(repositories ?: mutableListOf())
+                recyclerViewAdapter.setRepositories(repositories ?: mutableListOf(), origin = "Retrofit")
 
                 if (body == null) {
                     val message = response.message()

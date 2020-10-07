@@ -3,6 +3,7 @@ package com.neu.githubsrepos.ui
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
@@ -13,6 +14,7 @@ import com.neu.githubsrepos.R
 import com.neu.githubsrepos.fragments.MainFragment
 import com.neu.githubsrepos.fragments.RepositoryFragment
 import com.neu.githubsrepos.fragments.RepositoryFragmentDirections
+import com.neu.githubsrepos.github.models.Repository
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {

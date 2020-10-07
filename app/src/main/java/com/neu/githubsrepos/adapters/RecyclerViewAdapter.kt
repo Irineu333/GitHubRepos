@@ -39,13 +39,13 @@ class RecyclerViewAdapter(
 
         //strings
         val userName = repository.name
-        val userLogin = autor.login
+        val userLogin = autor?.login
 
         holder.languages.text = ""
         //repository.getLanguages(holder.languages)
 
         //avatar config using Glide
-        Glide.with(context).load(repository.owner.avatar_url).placeholder(R.drawable.ic_perfil)
+        Glide.with(context).load(repository.owner?.avatar_url).placeholder(R.drawable.ic_perfil)
             .into(holder.avatar)
 
         Log.d("RecyclerView", "onBindViewHolder pos $position")
@@ -57,21 +57,26 @@ class RecyclerViewAdapter(
             listener.onClick(repository)
         }
 
-        holder.bind(userName, userLogin)
+        holder.bind(userName, userLogin?: "nulo")
     }
 
     override fun getItemCount(): Int {
         return listaRepos.size
     }
 
-    fun setRepositories(listaRepos: MutableList<Repository>) {
+    fun setRepositories(listaRepos: MutableList<Repository>, origin : String = "") {
+        //limpar
         this.listaRepos.clear()
         copyList.clear()
+
+        //atualizar
         this.listaRepos = listaRepos
         copyList.addAll(listaRepos)
+
+        //notificar
         notifyDataSetChanged()
 
-        Log.d("RecyclerView", "setRepositories, count ${this.listaRepos.size}")
+        Log.d("RecyclerView", "setRepositories $origin, count ${this.listaRepos.size}")
     }
 
 
@@ -92,7 +97,7 @@ class RecyclerViewAdapter(
     class Holder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         val avatar: ImageView = itemView.findViewById(R.id.avatar)
-        val languages = itemView.findViewById<TextView>(R.id.languages)
+        val languages: TextView = itemView.findViewById<TextView>(R.id.languages)
 
         private val userName = itemView.findViewById<TextView>(R.id.user_name)
         private val login = itemView.findViewById<TextView>(R.id.login)

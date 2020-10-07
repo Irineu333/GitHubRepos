@@ -1,7 +1,13 @@
 package com.neu.githubsrepos.github.models
 
 
+import android.widget.TextView
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.Ignore
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
+import com.neu.githubsrepos.util.retrofitUtil
 import java.io.Serializable
 
 /*
@@ -15,58 +21,62 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 For support, please feel free to contact me at https://www.linkedin.com/in/syedabsar */
 
-
-data class Repository(
-
-    @SerializedName("id") val id: Int,
-    @SerializedName("node_id") val node_id: String,
-    @SerializedName("name") val name: String,
-    @SerializedName("full_name") val full_name: String,
-    @SerializedName("owner") val owner: Owner /* objeto, informações proprietário */,
-    @SerializedName("private") val private: Boolean,
-    @SerializedName("html_url") val html_url: String,
-    @SerializedName("description") val description: String,
-    @SerializedName("fork") val fork: Boolean,
-    @SerializedName("url") val url: String,
-    @SerializedName("archive_url") val archive_url: String,
-    @SerializedName("assignees_url") val assignees_url: String,
-    @SerializedName("blobs_url") val blobs_url: String,
-    @SerializedName("branches_url") val branches_url: String,
-    @SerializedName("collaborators_url") val collaborators_url: String,
-    @SerializedName("comments_url") val comments_url: String,
-    @SerializedName("commits_url") val commits_url: String,
-    @SerializedName("compare_url") val compare_url: String,
-    @SerializedName("contents_url") val contents_url: String,
-    @SerializedName("contributors_url") val contributors_url: String,
-    @SerializedName("deployments_url") val deployments_url: String,
-    @SerializedName("downloads_url") val downloads_url: String,
-    @SerializedName("events_url") val events_url: String,
-    @SerializedName("forks_url") val forks_url: String,
-    @SerializedName("git_commits_url") val git_commits_url: String,
-    @SerializedName("git_refs_url") val git_refs_url: String,
-    @SerializedName("git_tags_url") val git_tags_url: String,
-    @SerializedName("git_url") val git_url: String,
-    @SerializedName("issue_comment_url") val issue_comment_url: String,
-    @SerializedName("issue_events_url") val issue_events_url: String,
-    @SerializedName("issues_url") val issues_url: String,
-    @SerializedName("keys_url") val keys_urls_url: String,
-    @SerializedName("labels_url") val labels_url: String,
-    @SerializedName("languages_url") val languages_url: String,
-    @SerializedName("merges_url") val merges_url: String,
-    @SerializedName("milestones_url") val milestones_url: String,
-    @SerializedName("notifications_url") val notifications_url: String,
-    @SerializedName("pulls_url") val pulls_url: String,
-    @SerializedName("releases_url") val releases_url: String,
-    @SerializedName("ssh_url") val ssh_url: String,
-    @SerializedName("stargazers_url") val stargazers_url: String,
-    @SerializedName("statuses_url") val statuses_url: String,
-    @SerializedName("subscribers_url") val subscribers_url: String,
-    @SerializedName("subscription_url") val subscription_url: String,
-    @SerializedName("tags_url") val tags_url: String,
-    @SerializedName("teams_url") val teams_url: String,
-    @SerializedName("trees_url") val trees_url: String
-) : Serializable {
-    /*
+@Entity(tableName = "repository_table")
+class Repository(
+    @PrimaryKey(autoGenerate = true)
+    @SerializedName("id") var id: Int = -1,
+    @SerializedName("node_id") var node_id: String = "",
+    @ColumnInfo(name = "repository_name")
+    @SerializedName("name") var name: String = "",
+    @SerializedName("full_name") var full_name: String = "",
+//    @ColumnInfo(name = "author_object")
+    @Ignore
+    @SerializedName("owner") var owner: Owner? = null /* objeto, informações proprietário */,
+    @SerializedName("private") var private: Boolean? = null,
+    @SerializedName("html_url") var html_url: String = "",
+    @ColumnInfo(name = "description")
+    @SerializedName("description") var description: String? = "",
+    @SerializedName("fork") var fork: Boolean? = null,
+    @SerializedName("url") var url: String = "",
+    @SerializedName("archive_url") var archive_url: String = "",
+    @SerializedName("assignees_url") var assignees_url: String = "",
+    @SerializedName("blobs_url") var blobs_url: String = "",
+    @SerializedName("branches_url") var branches_url: String = "",
+    @SerializedName("collaborators_url") var collaborators_url: String = "",
+    @SerializedName("comments_url") var comments_url: String = "",
+    @SerializedName("commits_url") var commits_url: String = "",
+    @SerializedName("compare_url") var compare_url: String = "",
+    @SerializedName("contents_url") var contents_url: String = "",
+    @SerializedName("contributors_url") var contributors_url: String = "",
+    @SerializedName("deployments_url") var deployments_url: String = "",
+    @SerializedName("downloads_url") var downloads_url: String = "",
+    @SerializedName("events_url") var events_url: String = "",
+    @SerializedName("forks_url") var forks_url: String = "",
+    @SerializedName("git_commits_url") var git_commits_url: String = "",
+    @SerializedName("git_refs_url") var git_refs_url: String = "",
+    @SerializedName("git_tags_url") var git_tags_url: String = "",
+    @SerializedName("git_url") var git_url: String = "",
+    @SerializedName("issue_comment_url") var issue_comment_url: String = "",
+    @SerializedName("issue_events_url") var issue_events_url: String = "",
+    @SerializedName("issues_url") var issues_url: String = "",
+    @SerializedName("keys_url") var keys_urls_url: String = "",
+    @SerializedName("labels_url") var labels_url: String = "",
+    @SerializedName("languages_url") var languages_url: String = "",
+    @SerializedName("merges_url") var merges_url: String = "",
+    @SerializedName("milestones_url") var milestones_url: String = "",
+    @SerializedName("notifications_url") var notifications_url: String = "",
+    @SerializedName("pulls_url") var pulls_url: String = "",
+    @SerializedName("releases_url") var releases_url: String = "",
+    @SerializedName("ssh_url") var ssh_url: String = "",
+    @SerializedName("stargazers_url") var stargazers_url: String = "",
+    @SerializedName("statuses_url") var statuses_url: String = "",
+    @SerializedName("subscribers_url") var subscribers_url: String = "",
+    @SerializedName("subscription_url") var subscription_url: String = "",
+    @SerializedName("tags_url") var tags_url: String = "",
+    @SerializedName("teams_url") var teams_url: String = "",
+    @SerializedName("trees_url") var trees_url: String = ""
+) : Serializable  {
+    @Ignore
     private var languages : MutableList<String>? = null
 
     companion object {
@@ -82,5 +92,4 @@ data class Repository(
         } else
             retrofitUtil?.formatar(textView, languages!!, emLista)
     }
-     */
 }

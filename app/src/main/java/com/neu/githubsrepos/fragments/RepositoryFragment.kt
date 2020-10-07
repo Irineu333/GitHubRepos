@@ -40,10 +40,10 @@ class RepositoryFragment : Fragment() {
         val repository = RepositoryFragmentArgs.fromBundle(requireArguments()).repository
         Log.d("Arguments", repository.name)
 
-        Glide.with(requireActivity()).load(repository.owner.avatar_url).placeholder(R.drawable.ic_perfil)
+        Glide.with(requireActivity()).load(repository.owner?.avatar_url).placeholder(R.drawable.ic_perfil)
             .into(avatar)
 
-        login.text = repository.owner.login
+        login.text = repository.owner?.login
         description.text = repository.description
 
         //repository.getLanguages(languages, true)
