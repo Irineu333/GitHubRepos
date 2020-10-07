@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/my_navigation"
+    app:startDestination="@id/mainFragment">
+
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.neu.githubsrepos.fragments.MainFragment"
+        android:label="fragment_main"
+        tools:layout="@layout/fragment_main" >
+        <action
+            android:id="@+id/action_mainFragment_to_repositoryFragment"
+            app:destination="@id/repositoryFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/repositoryFragment"
+        android:name="com.neu.githubsrepos.fragments.RepositoryFragment"
+        android:label="fragment_repository"
+        tools:layout="@layout/fragment_repository" >
+        <action
+            android:id="@+id/action_repositoryFragment_to_mainFragment"
+            app:destination="@id/mainFragment" />
+        <argument
+            android:name="repository"
+            app:argType="com.neu.githubsrepos.github.models.Repository" />
+    </fragment>
+</navigation>
